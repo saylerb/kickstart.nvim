@@ -709,6 +709,29 @@ require('lazy').setup({
         bashls = {},
         clangd = {},
         gopls = {},
+        html = {
+          -- requires node pkg vscode-langservers-extracted installed
+          init_options = {
+            configurationSection = { 'html', 'css', 'javascript' },
+            embeddedLanguages = {
+              css = true,
+              javascript = true,
+            },
+            provideFormatter = false,
+          },
+          settings = {
+            html = {
+              format = {
+                -- same configuration as vscode https://code.visualstudio.com/docs/languages/html#_formatting
+              },
+              hover = {
+                documentation = true,
+                references = true,
+              },
+            },
+          },
+        },
+        --
         -- pyright = {},
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
