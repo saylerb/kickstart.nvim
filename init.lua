@@ -708,7 +708,16 @@ require('lazy').setup({
       local servers = {
         bashls = {},
         clangd = {},
-        gopls = {},
+        gopls = {
+          settings = {
+            gopls = {
+              usePlaceholders = true,
+              ['ui.inlayhints.hints'] = {
+                parameterNames = true,
+              },
+            },
+          },
+        },
         html = {
           -- requires node pkg vscode-langservers-extracted installed
           init_options = {
