@@ -261,6 +261,49 @@ require('lazy').setup({
   -- "gc" to comment visual regions/lines
   { 'numToStr/Comment.nvim', opts = {} },
   {
+    'ThePrimeagen/refactoring.nvim',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      { 'nvim-treesitter/nvim-treesitter', branch = 'main' },
+      { 'nvim-telescope/telescope.nvim', optional = true },
+    },
+    config = function()
+      local refactoring = require 'refactoring'
+
+      refactoring.setup {
+        prompt_func_return_type = { go = true }, -- ask for return types in Go
+        prompt_func_param_type = { go = true }, -- ask for param types in Go
+        show_success_message = true,
+      }
+
+      local function map(mode, lhs, rhs, opts)
+        vim.keymap.set(mode, lhs, rhs, opts)
+      end
+
+      -- direct refactors in visual mode
+      map({ 'x' }, '<leader>re', function()
+        return refactoring.refactor 'Extract Function'
+      end, { desc = '[r]efactor: [e]xtract function', expr = true })
+
+      map({ 'x' }, '<leader>rv', function()
+        return refactoring.refactor 'Extract Variable'
+      end, { desc = '[r]efactor: extract [v]ariable', expr = true })
+
+      map({ 'n', 'x' }, '<leader>ri', function()
+        return refactoring.refactor 'Inline Variable'
+      end, { desc = '[r]efactor: [i]nline variable', expr = true })
+
+      -- optional Telescope picker if it is installed
+      local ok, telescope = pcall(require, 'telescope')
+      if ok then
+        telescope.load_extension 'refactoring'
+        map({ 'n', 'v' }, '<leader>rr', function()
+          telescope.extensions.refactoring.refactors()
+        end, { desc = '[r]efactor: [r]un via Telescope' })
+      end
+    end,
+  },
+  {
     'nvim-neotest/neotest',
     dependencies = {
       'nvim-neotest/nvim-nio',
