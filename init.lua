@@ -219,6 +219,21 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
+vim.api.nvim_create_autocmd('FileType', {
+  desc = 'Use 2 spaces for JS/TS style files',
+  group = vim.api.nvim_create_augroup('kickstart-js-indent', { clear = true }),
+  pattern = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact' },
+  callback = function(event)
+    vim.schedule(function()
+      local bo = vim.bo[event.buf]
+      bo.expandtab = true
+      bo.tabstop = 2
+      bo.shiftwidth = 2
+      bo.softtabstop = 2
+    end)
+  end,
+})
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -1220,12 +1235,20 @@ require('lazy').setup({
         'vimdoc',
       }
       local group = vim.api.nvim_create_augroup('kickstart-nvim-treesitter', { clear = true })
+      local disable_ts_indent = {
+        ruby = true,
+        javascript = true,
+        javascriptreact = true,
+        typescript = true,
+        typescriptreact = true,
+      }
+
       vim.api.nvim_create_autocmd('FileType', {
         group = group,
         pattern = filetypes,
         callback = function(event)
           vim.treesitter.start(event.buf)
-          if event.match ~= 'ruby' then
+          if not disable_ts_indent[event.match] then
             vim.bo[event.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
           end
         end,
