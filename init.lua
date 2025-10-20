@@ -864,6 +864,34 @@ require('lazy').setup({
             },
           },
         },
+        ts_ls = {
+          filetypes = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact' },
+          settings = {
+            javascript = {
+              format = { enable = false },
+              inlayHints = {
+                includeInlayEnumMemberValueHints = true,
+                includeInlayFunctionLikeReturnTypeHints = true,
+                includeInlayParameterNameHints = 'all',
+                includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+                includeInlayPropertyDeclarationTypeHints = true,
+                includeInlayVariableTypeHints = true,
+              },
+            },
+            typescript = {
+              format = { enable = false },
+              inlayHints = {
+                includeInlayEnumMemberValueHints = true,
+                includeInlayFunctionLikeReturnTypeHints = true,
+                includeInlayParameterNameHints = 'all',
+                includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+                includeInlayPropertyDeclarationTypeHints = true,
+                includeInlayVariableTypeHints = true,
+              },
+            },
+          },
+          single_file_support = false,
+        },
         --
         -- pyright = {},
         -- rust_analyzer = {},
@@ -908,8 +936,10 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
-        'gopls',
         'bashls',
+        'gopls',
+        'prettierd',
+        'ts_ls',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -962,6 +992,12 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
+        javascript = { 'prettierd', 'prettier', stop_after_first = true },
+        javascriptreact = { 'prettierd', 'prettier', stop_after_first = true },
+        typescript = { 'prettierd', 'prettier', stop_after_first = true },
+        typescriptreact = { 'prettierd', 'prettier', stop_after_first = true },
+        json = { 'prettierd', 'prettier', stop_after_first = true },
+        jsonc = { 'prettierd', 'prettier', stop_after_first = true },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
@@ -1138,7 +1174,26 @@ require('lazy').setup({
     build = ':TSUpdate',
     config = function()
       local treesitter = require 'nvim-treesitter'
-      local parsers = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc', 'go' }
+      local parsers = {
+        'bash',
+        'c',
+        'css',
+        'diff',
+        'go',
+        'html',
+        'javascript',
+        'jsdoc',
+        'json',
+        'lua',
+        'luadoc',
+        'markdown',
+        'markdown_inline',
+        'query',
+        'tsx',
+        'typescript',
+        'vim',
+        'vimdoc',
+      }
 
       -- stay with the default install_dir but make sure the parsers we care about exist
       vim.schedule(function()
@@ -1146,7 +1201,24 @@ require('lazy').setup({
       end)
 
       -- turn on highlighting/indent for our common filetypes using core Neovim APIs
-      local filetypes = { 'bash', 'c', 'diff', 'go', 'html', 'lua', 'markdown', 'query', 'vim', 'vimdoc' }
+      local filetypes = {
+        'bash',
+        'c',
+        'css',
+        'diff',
+        'go',
+        'html',
+        'javascript',
+        'javascriptreact',
+        'json',
+        'lua',
+        'markdown',
+        'query',
+        'typescript',
+        'typescriptreact',
+        'vim',
+        'vimdoc',
+      }
       local group = vim.api.nvim_create_augroup('kickstart-nvim-treesitter', { clear = true })
       vim.api.nvim_create_autocmd('FileType', {
         group = group,
