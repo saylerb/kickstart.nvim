@@ -208,6 +208,42 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
+-- Highlight trailing whitespace to make it easier to spot while editing
+local trailing_ws_group = vim.api.nvim_create_augroup('kickstart-trailing-whitespace', { clear = true })
+local function set_trailing_ws_hl()
+  vim.api.nvim_set_hl(0, 'KickstartTrailingWhitespace', { link = 'DiagnosticError', default = true })
+end
+set_trailing_ws_hl()
+vim.api.nvim_create_autocmd('ColorScheme', {
+  group = trailing_ws_group,
+  callback = set_trailing_ws_hl,
+})
+
+vim.api.nvim_create_autocmd({ 'BufWinEnter', 'BufWritePost', 'InsertLeave' }, {
+  group = trailing_ws_group,
+  callback = function(event)
+    if vim.bo[event.buf].buftype ~= '' then
+      return
+    end
+    local current_match = vim.b[event.buf].kickstart_trailing_ws_match
+    if current_match ~= nil then
+      pcall(vim.fn.matchdelete, current_match)
+    end
+    vim.b[event.buf].kickstart_trailing_ws_match = vim.fn.matchadd('KickstartTrailingWhitespace', '\\s\\+$')
+  end,
+})
+
+vim.api.nvim_create_autocmd('InsertEnter', {
+  group = trailing_ws_group,
+  callback = function(event)
+    local current_match = vim.b[event.buf].kickstart_trailing_ws_match
+    if current_match ~= nil then
+      pcall(vim.fn.matchdelete, current_match)
+      vim.b[event.buf].kickstart_trailing_ws_match = nil
+    end
+  end,
+})
+
 -- Highlight when yanking (copying) text
 --  Try it with `yap` in normal mode
 --  See `:help vim.hl.on_yank()`
