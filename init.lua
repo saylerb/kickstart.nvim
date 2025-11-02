@@ -943,6 +943,7 @@ require('lazy').setup({
           },
           single_file_support = false,
         },
+        terraformls = {},
         --
         -- pyright = {},
         -- rust_analyzer = {},
@@ -990,6 +991,8 @@ require('lazy').setup({
         'bashls',
         'gopls',
         'prettierd',
+        'terraformls',
+        'tflint',
         'ts_ls',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
@@ -1049,6 +1052,7 @@ require('lazy').setup({
         typescriptreact = { 'prettierd', 'prettier', stop_after_first = true },
         json = { 'prettierd', 'prettier', stop_after_first = true },
         jsonc = { 'prettierd', 'prettier', stop_after_first = true },
+        terraform = { 'terraform_fmt' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
@@ -1231,6 +1235,7 @@ require('lazy').setup({
         'css',
         'diff',
         'go',
+        'hcl',
         'html',
         'javascript',
         'jsdoc',
@@ -1240,6 +1245,7 @@ require('lazy').setup({
         'markdown',
         'markdown_inline',
         'query',
+        'terraform',
         'tsx',
         'typescript',
         'vim',
@@ -1258,6 +1264,7 @@ require('lazy').setup({
         'css',
         'diff',
         'go',
+        'hcl',
         'html',
         'javascript',
         'javascriptreact',
@@ -1265,6 +1272,7 @@ require('lazy').setup({
         'lua',
         'markdown',
         'query',
+        'terraform',
         'typescript',
         'typescriptreact',
         'vim',
